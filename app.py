@@ -7,7 +7,6 @@ from ultralytics import YOLO
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024        # 8 MB upload limit
 model = YOLO('best.pt')
-model(np.zeros((640, 640, 3), np.uint8), verbose=False)   # warm-up so the first real request is not the slowest
 
 def to_b64(img):
     return base64.b64encode(cv2.imencode('.jpg', img)[1]).decode()
