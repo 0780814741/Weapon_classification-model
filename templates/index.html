@@ -1,5 +1,3 @@
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,33 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Weapon Detection</title>
 <style>
-  body{font-family:Arial,sans-serif;max-width:900px;margin:auto;padding:20px;background:#f4f4f4}
-  h1{text-align:center} .card{background:#fff;padding:16px;border-radius:8px;margin-bottom:16px}
-  img{max-width:100%;border-radius:6px} .row{display:flex;gap:16px;flex-wrap:wrap} .row div{flex:1;min-width:280px;text-align:center}
-  .error{color:#b00020} button{padding:8px 16px}
+  :root{--green:#16a34a;--dark:#0b3d2e;--mid:#14532d;--light:#ecfdf5;--ink:#0f172a;--muted:#64748b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--light);color:var(--ink)}
+  header{background:linear-gradient(135deg,var(--dark),var(--green));color:#fff;text-align:center;padding:42px 20px 56px}
+  header h1{margin:0 0 8px;font-size:2rem;letter-spacing:.5px}
+  header p{margin:0;opacity:.9}
+  main{max-width:960px;margin:-32px auto 40px;padding:0 16px}
+  .card{background:#fff;border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 6px 20px rgba(11,61,46,.12)}
+  .drop{border:2px dashed var(--green);border-radius:12px;padding:28px;text-align:center;background:#f7fef9;cursor:pointer;transition:.2s}
+  .drop:hover{background:#dcfce7}
+  .drop strong{color:var(--mid)}
+  #fname{display:block;margin-top:8px;color:var(--muted);font-size:.9rem}
+  input[type=file]{display:none}
+  button{width:100%;margin-top:16px;padding:14px;border:0;border-radius:10px;background:var(--green);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s}
+  button:hover{background:var(--mid)}
+  button:disabled{background:#94a3b8;cursor:wait}
+  .error{margin-top:14px;padding:12px;border-radius:8px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+  .row{display:flex;gap:18px;flex-wrap:wrap}
+  .row .col{flex:1;min-width:280px;text-align:center}
+  .col h3{margin:0 0 10px;color:var(--mid)}
+  img{max-width:100%;border-radius:10px;border:1px solid #d1fae5}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
+  .badge{padding:8px 14px;border-radius:999px;color:#fff;font-weight:600;font-size:.95rem;background:#475569}
+  .handgun{background:#dc2626}.knife{background:#ea580c}.rifle{background:#7c3aed}.sword{background:#0369a1}
+  .ok{padding:12px;border-radius:8px;background:#dcfce7;color:#166534;font-weight:600}
+  small{color:var(--muted);display:block;margin-top:10px}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding-bottom:30px}
 </style>
 </head>
 <body>
-<h1>AI Weapon Detection</h1>
-<p style="text-align:center">Upload an image to scan for handguns, knives, rifles and swords (YOLO11).</p>
-<div class="card">
-  <form method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" accept="image/*" required>
-    <button type="submit">Run Detection</button>
-  </form>
-  {% if error %}<p class="error">{{ error }}</p>{% endif %}
-</div>
-{% if result %}
-<div class="card row">
-  <div><h3>Original</h3><img src="data:image/jpeg;base64,{{ original }}" alt="Original"></div>
-  <div><h3>Detections</h3><img src="data:image/jpeg;base64,{{ result }}" alt="Result"></div>
-</div>
-<div class="card">
-  {% if detections %}<ul>{% for name, conf in detections %}<li>{{ name }} (confidence {{ conf }})</li>{% endfor %}</ul>
-  {% else %}<p>No weapons detected.</p>{% endif %}
-  <small>Automated screening only. The model can miss objects, so a clear result does not guarantee none are present.</small>
-</div>
-{% endif %}
+<header>
+  <h1>AI Weapon Detection</h1>
+  <p>Upload an image to scan for handguns, knives, rifles and swords (YOLO11)</p>
+</header>
+<main>
+  <div class="card">
+    <form method="POST" enctype="multipart/form-data" id="form">
+      <label class="drop" for="file">
+        <strong>Click to choose an image</strong>
+        <span id="fname">PNG, JPG or WEBP, up to 8 MB</span>
+      </label>
+      <input type="file" id="file" name="file" accept="image/*" required>
+      <button type="submit" id="btn">Run Detection</button>
+    </form>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  </div>
+  {% if result %}
+  <div class="card row">
+    <div class="col"><h3>Original</h3><img src="data:image/jpeg;base64,{{ original }}" alt="Original"></div>
+    <div class="col"><h3>Detections</h3><img src="data:image/jpeg;base64,{{ result }}" alt="Result"></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0;color:var(--mid)">Results</h3>
+    {% if detections %}
+    <div class="badges">
+      {% for name, conf in detections %}
+      <span class="badge {{ name|lower }}">{{ name }} &middot; {{ (conf * 100)|round|int }}%</span>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="ok">No weapons detected.</div>
+    {% endif %}
+    <small>Automated screening only. The model can miss objects, so a clear result does not guarantee none are present.</small>
+  </div>
+  {% endif %}
+</main>
+<footer>Weapon Detection &middot; YOLO11 &middot; Flask</footer>
+<script>
+  document.getElementById('file').addEventListener('change', function () {
+    document.getElementById('fname').textContent = this.files[0] ? this.files[0].name : 'PNG, JPG or WEBP, up to 8 MB';
+  });
+  document.getElementById('form').addEventListener('submit', function () {
+    var b = document.getElementById('btn');
+    b.disabled = true;
+    b.textContent = 'Scanning... the first request can take up to a minute';
+  });
+</script>
 </body>
 </html>
-```
