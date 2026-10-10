@@ -1,0 +1,39 @@
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Weapon Detection</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:900px;margin:auto;padding:20px;background:#f4f4f4}
+  h1{text-align:center} .card{background:#fff;padding:16px;border-radius:8px;margin-bottom:16px}
+  img{max-width:100%;border-radius:6px} .row{display:flex;gap:16px;flex-wrap:wrap} .row div{flex:1;min-width:280px;text-align:center}
+  .error{color:#b00020} button{padding:8px 16px}
+</style>
+</head>
+<body>
+<h1>AI Weapon Detection</h1>
+<p style="text-align:center">Upload an image to scan for handguns, knives, rifles and swords (YOLO11).</p>
+<div class="card">
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*" required>
+    <button type="submit">Run Detection</button>
+  </form>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+</div>
+{% if result %}
+<div class="card row">
+  <div><h3>Original</h3><img src="data:image/jpeg;base64,{{ original }}" alt="Original"></div>
+  <div><h3>Detections</h3><img src="data:image/jpeg;base64,{{ result }}" alt="Result"></div>
+</div>
+<div class="card">
+  {% if detections %}<ul>{% for name, conf in detections %}<li>{{ name }} (confidence {{ conf }})</li>{% endfor %}</ul>
+  {% else %}<p>No weapons detected.</p>{% endif %}
+  <small>Automated screening only. The model can miss objects, so a clear result does not guarantee none are present.</small>
+</div>
+{% endif %}
+</body>
+</html>
+```
