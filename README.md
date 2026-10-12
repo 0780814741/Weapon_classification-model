@@ -1,7 +1,7 @@
 # Weapon Detection Model
 
 An AI model that detects weapons in images and a Flask web app that serves it.
-Built by **Tuyizere Christian** as a class assignment at the United African Institute of Technology (UAIT), Kigali.
+Built by **Tuyizere Christian**  Kigali.
 
 **Live app:** https://weapon-classification-model.onrender.com
 
