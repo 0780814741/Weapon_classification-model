@@ -22,12 +22,6 @@ Upload an image and the app draws boxes around any weapons it finds, with a conf
 - **Split:** 80% train, 10% validation, 10% test, stratified by class
 - **Training:** up to 100 epochs with early stopping (patience 20), image size 640, batch size 16, on a Google Colab GPU
 
-| Metric (test set) | Result |
-|---|---|
-| mAP50 | _add your value from the notebook_ |
-| mAP50-95 | _add your value from the notebook_ |
-| Precision | _add your value from the notebook_ |
-| Recall | _add your value from the notebook_ |
 
 ## Project steps (done in the Colab notebook)
 1. Dataset: load and display the data
@@ -47,12 +41,6 @@ Upload an image and the app draws boxes around any weapons it finds, with a conf
 | `templates/index.html` | Web page |
 | `.python-version` | Python version used on Render |
 
-## Run it on your own computer
-```bash
-pip install -r requirements.txt
-flask --app app run
-```
-Then open http://127.0.0.1:5000 in your browser.
 
 ## Deployment (Render)
 - Build command: `pip install -r requirements.txt && pip install --force-reinstall --no-deps opencv-python-headless`
